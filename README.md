@@ -50,5 +50,5 @@ quarto::quarto_render("dashboard/")
 
 ## Adding scrapers
 
-Scrapers are defined in paperboy itself. Once a new scraper is merged there,
+Scrapers are defined in paperboy itself, see the [For developers](https://github.com/JBGruber/paperboy#for-developers) section for details. Once a new scraper is merged there,
 it will automatically appear in the monitor on the next daily run.
