@@ -1,0 +1,12 @@
+/* Value box responsive text */
+.value-box .value-box-value {
+  font-size: clamp(1rem, 2.5vw, 2rem) !important;
+}
+
+.value-box .value-box-title {
+  font-size: clamp(0.65rem, 1.5vw, 1rem) !important;
+}
+
+.value-box .value-box-showcase .bi {
+  font-size: clamp(1rem, 3vw, 2.5rem) !important;
+}
