@@ -1,0 +1,19 @@
+Package: paperboypulse
+Title: Paperboy Monitor Dashboard
+Version: 0.1.0
+Authors@R: person("Sina", "Chen", email = "sina.chen@uni-konstanz.de", role = c("aut", "cre"))
+Description: Monitoring dashboard for paperboy news scrapers.
+Encoding: UTF-8
+Imports:
+    DBI,
+    RSQLite,
+    dplyr,
+    tidyr,
+    ggplot2,
+    DT,
+    xml2,
+    curl,
+    here,
+    paperboy
+Remotes:
+    sina-chen/paperboy

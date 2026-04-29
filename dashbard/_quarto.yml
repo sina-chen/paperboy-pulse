@@ -1,0 +1,14 @@
+project:
+  type: website
+  output-dir: _site
+
+website:
+  title: "Paperboy Pulse"
+  navbar:
+    background: "#2c3e50"
+    foreground: "#ecf0f1"
+
+format:
+  html:
+    theme: flatly
+    embed-resources: false
