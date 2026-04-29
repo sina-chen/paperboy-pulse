@@ -1,14 +1,14 @@
 ---
-title: "Paperboy Monitor"
+title: ""
 format:
   dashboard:
     theme:
       - flatly
     nav-buttons:
       - icon: github
-        href: https://github.com/your-org/paperboy
+        href: https://github.com/JBGruber/paperboy
         aria-label: Paperboy on GitHub
-logo: assets/logo.png   # remove this line if you have no logo
+css: assets/custom.css
 ---
 
 ```{r}
@@ -25,8 +25,8 @@ library(DT)
 source("helpers.R")
 
 # ── Paths ──────────────────────────────────────────────────────────────────────
-DB_PATH    <- here::here("data", "paperboy_monitor.sqlite")
-STATUS_CSV <- here::here("data", "status.csv")
+DB_PATH    <- "../data/paperboy_monitor.sqlite"
+STATUS_CSV <- "../data/status.csv"
 
 # ── Load data ──────────────────────────────────────────────────────────────────
 status_info <- read.csv(STATUS_CSV, stringsAsFactors = FALSE)
@@ -37,21 +37,76 @@ runs    <- get_run_history(DB_PATH)
 
 # ── Summary counts ─────────────────────────────────────────────────────────────
 n_total    <- nrow(status_info)
-n_ok       <- sum(results$health == "ok",                        na.rm = TRUE)
-n_degraded <- sum(results$health == "degraded",                  na.rm = TRUE)
-n_broken   <- sum(results$health %in% c("broken", "error"),      na.rm = TRUE)
-n_no_rss   <- sum(results$health == "no_rss",                    na.rm = TRUE)
+n_ok       <- sum(results$health == "ok",                   na.rm = TRUE)
+n_degraded <- sum(results$health == "degraded",             na.rm = TRUE)
+n_broken   <- sum(results$health %in% c("broken", "error"), na.rm = TRUE)
+n_no_rss   <- sum(results$health == "no_rss",               na.rm = TRUE)
 
 # ── Last run timestamp ─────────────────────────────────────────────────────────
 ts       <- results$tested_at[!is.na(results$tested_at)]
 last_run <- if (length(ts) == 0) "Never tested" else
   paste("Last run:", format(max(as.POSIXct(ts)), "%Y-%m-%d %H:%M UTC"))
 
-# ── Colour helpers shared across tabs ─────────────────────────────────────────
+# ── Colour helpers ─────────────────────────────────────────────────────────────
 health_bg  <- c(ok = "#d4edda", degraded = "#fff3cd", broken = "#f8d7da",
                 error = "#f8d7da", no_rss = "#e9ecef", untested = "#e9ecef")
 health_col <- c(ok = "#155724", degraded = "#856404", broken = "#721c24",
                 error = "#721c24", no_rss = "#495057", untested = "#495057")
+
+# ── Domain detail setup ────────────────────────────────────────────────────────
+all_domains <- sort(status_info$domain)
+
+domain_histories <- lapply(setNames(all_domains, all_domains), function(d) {
+  get_domain_history(DB_PATH, d)
+})
+
+# Pre-render one PNG per domain into assets/plots/
+plots_dir <- "assets/plots"
+dir.create(plots_dir, showWarnings = FALSE, recursive = TRUE)
+
+for (d in all_domains) {
+  h        <- domain_histories[[d]]
+  png_path <- file.path(plots_dir, paste0(gsub("[^a-zA-Z0-9]", "-", d), ".png"))
+
+  png(png_path, width = 800, height = 300, res = 96)
+
+  if (nrow(h) == 0) {
+    p <- ggplot() +
+      annotate("text", x = 0.5, y = 0.5, label = "No test history yet",
+               size = 6, colour = "grey60") +
+      theme_void()
+  } else {
+    p <- h |>
+      mutate(tested_at = as.POSIXct(tested_at)) |>
+      pivot_longer(
+        cols      = c(pct_headline, pct_datetime, pct_author, pct_text),
+        names_to  = "metric",
+        values_to = "value"
+      ) |>
+      mutate(
+        metric = recode(metric,
+          pct_headline = "Headline", pct_datetime = "Datetime",
+          pct_author   = "Author",   pct_text     = "Text"
+        ),
+        value = value * 100
+      ) |>
+      ggplot(aes(x = tested_at, y = value, colour = metric, group = metric)) +
+        geom_hline(yintercept = 50, linetype = "dashed", colour = "grey70") +
+        geom_line(linewidth = 1.1) +
+        geom_point(size = 2.5, position = position_jitter(height = 0.8, seed = 42)) +
+        scale_y_continuous(limits = c(0, 100), labels = \(x) paste0(x, "%")) +
+        scale_colour_manual(values = c(
+          Headline = "#e74c3c", Datetime = "#3498db",
+          Author   = "#2ecc71", Text     = "#f39c12"
+        )) +
+        labs(x = NULL, y = "Extraction rate", colour = NULL) +
+        theme_minimal(base_size = 13) +
+        theme(legend.position = "bottom", panel.grid.minor = element_blank())
+  }
+
+  print(p)
+  dev.off()
+}
 ```
 
 # Overview
@@ -100,10 +155,9 @@ n_no_rss
 
 ## Row {height=80%}
 
-### Scraper Status {.tabset}
+### Scraper Status
 
 ```{r}
-#| title: "Scraper Status"
 #| label: status-table
 
 display <- results |>
@@ -169,30 +223,31 @@ datatable(
 # Domain Detail
 
 ```{r}
-#| label: domain-detail-data
-
-# Pre-compute history for all domains so the tab renders statically.
-# Each domain gets its own sub-tab below.
-all_domains <- sort(status_info$domain)
-
-domain_histories <- lapply(setNames(all_domains, all_domains), function(d) {
-  get_domain_history(DB_PATH, d)
-})
-```
-
-## {.tabset}
-
-```{r}
-#| label: domain-tabs
+#| label: domain-detail
+#| echo: false
 #| output: asis
 
+# Build dropdown
+cat('<div style="margin-bottom: 20px;">\n')
+cat('<label for="domain-select" style="font-weight:600; margin-right:8px;">Domain:</label>\n')
+cat('<select id="domain-select" onchange="showDomain(this.value)" style="padding:6px 12px; font-size:14px; border:1px solid #ced4da; border-radius:4px; min-width:280px;">\n')
 for (d in all_domains) {
-  h   <- domain_histories[[d]]
-  rss <- status_info$rss[status_info$domain == d]
+  cat(sprintf('  <option value="%s">%s</option>\n',
+              gsub("[^a-zA-Z0-9]", "-", d), d))
+}
+cat('</select>\n')
+cat('</div>\n\n')
 
-  # ── badge ───────────────────────────────────────────────────────────────────
+# Build one hidden div per domain
+for (d in all_domains) {
+  h      <- domain_histories[[d]]
+  rss    <- status_info$rss[status_info$domain == d]
+  div_id <- gsub("[^a-zA-Z0-9]", "-", d)
+  img_id <- paste0(div_id, ".png")
+
+  # Badge
   if (nrow(h) == 0) {
-    badge <- '<span class="badge bg-secondary">UNTESTED</span>'
+    badge <- '<span class="badge bg-secondary" style="font-size:0.9rem;">UNTESTED</span>'
     last  <- "Never tested"
   } else {
     badge_class <- switch(h$health[1],
@@ -202,101 +257,45 @@ for (d in all_domains) {
       error    = "bg-danger",
       "bg-secondary"
     )
-    badge <- sprintf('<span class="badge %s">%s</span>', badge_class, toupper(h$health[1]))
+    badge <- sprintf('<span class="badge %s" style="font-size:0.9rem;">%s</span>',
+                     badge_class, toupper(h$health[1]))
     last  <- format(as.POSIXct(h$tested_at[1]), "%Y-%m-%d %H:%M")
   }
 
+  # RSS link
   rss_link <- if (length(rss) == 0 || is.na(rss) || !nzchar(trimws(rss))) {
     "<em class='text-muted'>No RSS feed</em>"
   } else {
-    sprintf('<a href="%s" target="_blank" class="small text-break">%s</a>', rss, rss)
+    sprintf('<a href="%s" target="_blank" class="text-break">%s</a>', rss, rss)
   }
 
-  # ── trend plot ──────────────────────────────────────────────────────────────
-  trend_plot_code <- if (nrow(h) == 0) {
-    "ggplot() + annotate('text', x=0.5, y=0.5, label='No test history yet', size=6, colour='grey60') + theme_void()"
-  } else {
-    NULL  # plot built inline below
-  }
-
-  # ── emit markdown ────────────────────────────────────────────────────────────
-  cat(sprintf("\n### %s\n\n", d))
-  cat("::: {.grid}\n")
-  cat("::: {.g-col-3}\n")
-  cat("**Current status**\n\n")
-  cat(badge, "\n\n")
-  cat(sprintf("**Last tested:** %s\n\n", last))
-  cat("**RSS feed:**\n\n")
-  cat(rss_link, "\n\n")
-  cat(":::\n")
-  cat("::: {.g-col-9}\n")
-
-  # trend plot
-  if (!is.null(trend_plot_code) || nrow(h) == 0) {
-    cat("```{r echo=FALSE}\n")
-    cat("ggplot() + annotate('text', x=0.5, y=0.5, label='No test history yet', size=6, colour='grey60') + theme_void()\n")
-    cat("```\n\n")
-  } else {
-    # Build and print the plot object directly
-    p <- h |>
-      mutate(tested_at = as.POSIXct(tested_at)) |>
-      pivot_longer(
-        cols      = c(pct_headline, pct_datetime, pct_author, pct_text),
-        names_to  = "metric",
-        values_to = "value"
-      ) |>
-      mutate(
-        metric = recode(metric,
-          pct_headline = "Headline", pct_datetime = "Datetime",
-          pct_author   = "Author",   pct_text     = "Text"
-        ),
-        value = value * 100
-      )
-
-    cat("```{r echo=FALSE}\n")
-    cat(sprintf("domain_histories[['%s']] |>\n", d))
-    cat("  mutate(tested_at = as.POSIXct(tested_at)) |>\n")
-    cat("  pivot_longer(cols = c(pct_headline, pct_datetime, pct_author, pct_text),\n")
-    cat("               names_to = 'metric', values_to = 'value') |>\n")
-    cat("  mutate(metric = recode(metric, pct_headline='Headline', pct_datetime='Datetime',\n")
-    cat("                         pct_author='Author', pct_text='Text'), value = value * 100) |>\n")
-    cat("  ggplot(aes(x = tested_at, y = value, colour = metric, group = metric)) +\n")
-    cat("    geom_hline(yintercept = 50, linetype = 'dashed', colour = 'grey70') +\n")
-    cat("    geom_line(linewidth = 1.1) + geom_point(size = 2.5) +\n")
-    cat("    scale_y_continuous(limits = c(0, 100), labels = \\(x) paste0(x, '%')) +\n")
-    cat("    scale_colour_manual(values = c(Headline='#e74c3c', Datetime='#3498db',\n")
-    cat("                                   Author='#2ecc71', Text='#f39c12')) +\n")
-    cat("    labs(x = NULL, y = 'Extraction rate', colour = NULL) +\n")
-    cat("    theme_minimal(base_size = 13) +\n")
-    cat("    theme(legend.position = 'bottom', panel.grid.minor = element_blank())\n")
-    cat("```\n\n")
-  }
-
-  # history table
-  if (nrow(h) > 0) {
-    cat("```{r echo=FALSE}\n")
-    cat(sprintf("h <- domain_histories[['%s']]\n", d))
-    cat("h |>\n")
-    cat("  mutate(\n")
-    cat("    tested_at    = format(as.POSIXct(tested_at), '%Y-%m-%d %H:%M'),\n")
-    cat("    pct_headline = paste0(round(pct_headline * 100, 1), '%'),\n")
-    cat("    pct_datetime = paste0(round(pct_datetime * 100, 1), '%'),\n")
-    cat("    pct_author   = paste0(round(pct_author   * 100, 1), '%'),\n")
-    cat("    pct_text     = paste0(round(pct_text     * 100, 1), '%')\n")
-    cat("  ) |>\n")
-    cat("  select(tested_at, health, n_articles_attempted, n_http_success,\n")
-    cat("         pct_headline, pct_datetime, pct_author, pct_text, error_msg) |>\n")
-    cat("  datatable(rownames = FALSE,\n")
-    cat("            colnames = c('Tested At','Health','Articles','HTTP OK',\n")
-    cat("                         'Headline%','Datetime%','Author%','Text%','Error'),\n")
-    cat("            options  = list(pageLength = 10, dom = 'tip'),\n")
-    cat("            selection = 'none')\n")
-    cat("```\n\n")
-  }
-
-  cat(":::\n")
-  cat(":::\n\n")
+  # Emit div
+  cat(sprintf('<div id="domain-%s" class="domain-section" style="display:none;">\n', div_id))
+  cat('<div style="display:flex; gap:24px; align-items:center; margin-bottom:12px; flex-wrap:wrap;">\n')
+  cat(sprintf('  <div><strong>Status:</strong> %s</div>\n', badge))
+  cat(sprintf('  <div><strong>Last tested:</strong> %s</div>\n', last))
+  cat(sprintf('  <div><strong>RSS:</strong> %s</div>\n', rss_link))
+  cat('</div>\n')
+  cat(sprintf('<img src="assets/plots/%s" style="width:100%%; max-width:800px; border:1px solid #dee2e6; border-radius:4px;">\n', img_id))
+  cat('</div>\n\n')
 }
+
+# JavaScript to show/hide on dropdown change, and show first domain on load
+cat('
+<script>
+function showDomain(id) {
+  document.querySelectorAll(".domain-section").forEach(function(el) {
+    el.style.display = "none";
+  });
+  var el = document.getElementById("domain-" + id);
+  if (el) el.style.display = "block";
+}
+document.addEventListener("DOMContentLoaded", function() {
+  var sel = document.getElementById("domain-select");
+  if (sel) showDomain(sel.value);
+});
+</script>
+')
 ```
 
 # Run History
@@ -309,7 +308,7 @@ if (nrow(runs) == 0) {
 } else {
   runs |>
     mutate(
-      started_at   = format(as.POSIXct(started_at),   "%Y-%m-%d %H:%M"),
+      started_at   = format(as.POSIXct(started_at), "%Y-%m-%d %H:%M"),
       completed_at = ifelse(
         is.na(completed_at), "—",
         format(as.POSIXct(completed_at), "%Y-%m-%d %H:%M")

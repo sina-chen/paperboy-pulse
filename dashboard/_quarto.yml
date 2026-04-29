@@ -3,7 +3,8 @@ project:
   output-dir: _site
 
 website:
-  title: "Paperboy Pulse"
+  title: ""
+  search: false
   navbar:
     background: "#2c3e50"
     foreground: "#ecf0f1"
