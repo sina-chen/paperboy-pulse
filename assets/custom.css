@@ -1,12 +1,20 @@
-/* Value box responsive text */
+/* ── Value box responsive text ───────────────────────────────────────────────*/
 .value-box .value-box-value {
-  font-size: clamp(1rem, 2.5vw, 2rem) !important;
+  font-size: clamp(0.9rem, 2vw, 2rem) !important;
+  line-height: 1.2;
 }
 
 .value-box .value-box-title {
-  font-size: clamp(0.65rem, 1.5vw, 1rem) !important;
+  font-size: clamp(0.6rem, 1.2vw, 1rem) !important;
 }
 
 .value-box .value-box-showcase .bi {
-  font-size: clamp(1rem, 3vw, 2.5rem) !important;
+  font-size: clamp(1rem, 2.5vw, 2.5rem) !important;
+}
+
+/* ── GitHub icon to the right ────────────────────────────────────────────────*/
+#quarto-header .navbar-container {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: flex-end !important;
 }
