@@ -1,14 +1,16 @@
 ---
-title: ""
+title: "Monitor"
 format:
   dashboard:
     theme:
       - flatly
+    css: assets/custom.css
+    logo: assets/logo.svg
+    logo-href: https://github.com/JBGruber/paperboy
     nav-buttons:
       - icon: github
-        href: https://github.com/JBGruber/paperboy
+        href: https://github.com/sina-chen/paperboy-pulse
         aria-label: Paperboy on GitHub
-css: assets/custom.css
 ---
 
 ```{r}
@@ -64,6 +66,8 @@ domain_histories <- lapply(setNames(all_domains, all_domains), function(d) {
 plots_dir <- "assets/plots"
 dir.create(plots_dir, showWarnings = FALSE, recursive = TRUE)
 
+offsets <- c(Headline = -0.9, Datetime = -0.3, Author = 0.3, Text = 0.9)
+
 for (d in all_domains) {
   h        <- domain_histories[[d]]
   png_path <- file.path(plots_dir, paste0(gsub("[^a-zA-Z0-9]", "-", d), ".png"))
@@ -88,18 +92,20 @@ for (d in all_domains) {
           pct_headline = "Headline", pct_datetime = "Datetime",
           pct_author   = "Author",   pct_text     = "Text"
         ),
-        value = value * 100
+        value = value * 100,
+        value_offset = value + offsets[metric]
       ) |>
-      ggplot(aes(x = tested_at, y = value, colour = metric, group = metric)) +
+      ggplot(aes(x = tested_at, y = value_offset, colour = metric, group = metric)) +
         geom_hline(yintercept = 50, linetype = "dashed", colour = "grey70") +
-        geom_line(linewidth = 1.1) +
-        geom_point(size = 2.5, position = position_jitter(height = 0.8, seed = 42)) +
-        scale_y_continuous(limits = c(0, 100), labels = \(x) paste0(x, "%")) +
+        geom_line(linewidth = 0.8) +
+        geom_point(size = 2.5, aes(shape = metric)) +
+        scale_shape_manual(values = c(Headline = 16, Datetime = 17, Author = 15, Text = 18)) +
+        scale_y_continuous(limits = c(-1, 101), labels = \(x) paste0(x, "%")) +
         scale_colour_manual(values = c(
           Headline = "#e74c3c", Datetime = "#3498db",
           Author   = "#2ecc71", Text     = "#f39c12"
         )) +
-        labs(x = NULL, y = "Extraction rate", colour = NULL) +
+        labs(x = NULL, y = "Extraction rate", colour = NULL, shape = NULL) +
         theme_minimal(base_size = 13) +
         theme(legend.position = "bottom", panel.grid.minor = element_blank())
   }
