@@ -19,7 +19,7 @@ jobs:
       - name: Fetch latest status.csv from paperboy
         run: |
           curl -sSL \
-            "https://raw.githubusercontent.com/sina-chen/paperboy/main/inst/status.csv" \
+            "https://raw.githubusercontent.com/JBGruber/paperboy/main/inst/status.csv" \
             -o data/status.csv
 
       - name: Set up R
