@@ -1,6 +1,6 @@
 # paperboy-pulse 📰
 
-Monitoring dashboard for the [paperboy](https://github.com/your-org/paperboy) news scraper package. Runs daily checks against all scrapers and publishes a status dashboard to GitHub Pages.
+Monitoring dashboard for the [paperboy](https://github.com/JBGruber/paperboy) news scraper R package. Runs daily checks against all scrapers and publishes a status dashboard to GitHub Pages.
 
 ## How it works
 
@@ -12,7 +12,7 @@ Monitoring dashboard for the [paperboy](https://github.com/your-org/paperboy) ne
 
 ## Dashboard
 
-🔗 **[View the live dashboard](https://your-org.github.io/paperboy-pulse)**
+🔗 **[View the live dashboard](https://sina-chen.github.io/paperboy-pulse)**
 
 ## Structure
 
