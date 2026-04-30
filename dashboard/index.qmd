@@ -1,12 +1,10 @@
 ---
-title: "Monitor"
+title: "<a href='https://github.com/JBGruber/paperboy'><img src='assets/logo.svg' height='50'/></a> Monitor"
 format:
   dashboard:
     theme:
       - flatly
     css: assets/custom.css
-    logo: assets/logo.svg
-    logo-href: https://github.com/JBGruber/paperboy
     nav-buttons:
       - icon: github
         href: https://github.com/sina-chen/paperboy-pulse
