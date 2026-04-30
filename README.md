@@ -12,7 +12,7 @@ Monitoring dashboard for the [paperboy](https://github.com/JBGruber/paperboy) ne
 
 ## Dashboard
 
-🔗 **[View the live dashboard](https://sina-chen.github.io/paperboy-pulse)**
+🔗 **[View the dashboard](https://sina-chen.github.io/paperboy-pulse)**
 
 ## Structure
 
