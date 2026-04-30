@@ -2,7 +2,7 @@ name: Update Dashboard
 
 on:
   schedule:
-    - cron: '55 6 * * *'  # Every day at 7am UTC (8am Cologne time)
+    - cron: '27 8 * * *'  # Every day at 8:27am UTC (10:27am German time)
   workflow_dispatch:       # Allow manual trigger from GitHub UI
 
 jobs:
