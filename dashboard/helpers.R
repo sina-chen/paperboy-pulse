@@ -250,7 +250,7 @@ run_tests <- function(db_path, run_id, status_info, domains = NULL, n_articles =
 
   dbExecute(con,
     "INSERT INTO test_runs (run_id, started_at, n_domains, status) VALUES (?, ?, ?, 'running')",
-    list(run_id, format(Sys.time()), nrow(testable))
+    list(run_id, format(Sys.time()), as.integer(nrow(testable)))
   )
 
   for (i in seq_len(nrow(testable))) {
