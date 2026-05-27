@@ -2,6 +2,8 @@ library(DBI)
 library(RSQLite)
 library(dplyr)
 library(xml2)
+library(paperboy)
+
 
 # ── Database ──────────────────────────────────────────────────────────────────
 
@@ -201,7 +203,7 @@ run_domain_test <- function(domain, rss_url, con, run_id, n_articles = 3) {
 
     delivered <- paperboy::pb_deliver(
       collected,
-      try_default  = FALSE,
+      try_default  = F,
       ignore_fails = TRUE,
       verbose      = FALSE
     )
@@ -211,10 +213,12 @@ run_domain_test <- function(domain, rss_url, con, run_id, n_articles = 3) {
       return(invisible(NULL))
     }
 
-    txt          <- as.character(delivered$text)
+    txt          <- unlist(as.character(delivered$text))
+    author_str   <- unlist(as.character(delivered$author))
+    headline_str <- unlist(as.character(delivered$headline))
     pct_datetime <- mean(!is.na(delivered$datetime))
-    pct_author   <- mean(!is.na(delivered$author) & nchar(as.character(delivered$author)) > 0)
-    pct_headline <- mean(!is.na(delivered$headline) & nchar(as.character(delivered$headline)) > 0)
+    pct_author   <- mean(!is.na(author_str) & nchar(author_str) > 0)
+    pct_headline <- mean(!is.na(headline_str) & nchar(headline_str) > 0)
     pct_text     <- mean(!is.na(txt) & nchar(txt) > 100)
 
     health <- calculate_health(
