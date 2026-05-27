@@ -20,20 +20,8 @@ jobs:
         run: |
           curl -sSL \
             "https://raw.githubusercontent.com/JBGruber/paperboy/main/inst/status.csv" \
-            -o data/status_raw.csv
-          python3 -c "
-with open('data/status_raw.csv', 'r', encoding='utf-8') as f:
-    content = f.read()
-lines = content.replace('\r\n', '\n').replace('\r', '\n').split('\n')
-cleaned = []
-for line in lines:
-    if line.startswith('\"') and line.endswith('\"'):
-        line = line[1:-1]
-    cleaned.append(line)
-result = '\n'.join(cleaned).replace('\"\"', '\"')
-with open('data/status.csv', 'w', encoding='utf-8') as f:
-    f.write(result)
-"
+            -o data/status.csv
+          sed -i 's/\r//' data/status.csv
 
       - name: Set up R
         uses: r-lib/actions/setup-r@v2
