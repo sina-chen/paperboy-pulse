@@ -6,7 +6,7 @@ library(paperboy)
 DB_PATH    <- here("data", "paperboy_monitor.sqlite")
 STATUS_CSV <- here("data", "status.csv")
 
-status_info <- read.csv(STATUS_CSV, stringsAsFactors = FALSE)
+status_info <- read.csv2(STATUS_CSV, stringsAsFactors = FALSE)
 run_id      <- format(Sys.time(), "%Y%m%d_%H%M%S")
 
 init_db(DB_PATH)
