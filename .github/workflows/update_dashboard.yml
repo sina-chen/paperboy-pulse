@@ -21,8 +21,9 @@ jobs:
           curl -sSL \
             "https://raw.githubusercontent.com/JBGruber/paperboy/main/inst/status.csv" \
             -o data/status.csv
-          Rscript monitors/clean_status.R
-
+          sed 's/\r//' data/status_raw.csv | \
+          sed 's/^"\(.*\)"$/\1/' | \
+          sed 's/""/"/g' > data/status.csv
 
       - name: Set up R
         uses: r-lib/actions/setup-r@v2
