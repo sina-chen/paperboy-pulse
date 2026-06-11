@@ -1,6 +1,7 @@
 library(here)
 
 source(here("dashboard", "helpers.R"))
+remotes::install_github("JBGruber/paperboy")
 library(paperboy)
 
 DB_PATH    <- here("data", "paperboy_monitor.sqlite")

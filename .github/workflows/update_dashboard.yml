@@ -34,6 +34,8 @@ jobs:
 
       - name: Install R dependencies
         uses: r-lib/actions/setup-r-dependencies@v2
+        with:
+          extra-packages: remotes
 
       - name: Run scraper checks
         run: Rscript monitors/run_checks.R
