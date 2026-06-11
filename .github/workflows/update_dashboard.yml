@@ -39,6 +39,8 @@ jobs:
 
       - name: Run scraper checks
         run: Rscript monitors/run_checks.R
+        env:
+          GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Commit updated database
         run: |
