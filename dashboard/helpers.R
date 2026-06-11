@@ -185,7 +185,10 @@ run_domain_test <- function(domain, rss_url, con, run_id, n_articles = 10) {
   }
 
   # article_urls <- get_article_urls_from_rss(rss_url, n = n_articles)
-  rss <- paperboy::pb_collect_rss(rss_url)
+  rss <- tryCatch(
+    paperboy::pb_collect_rss(rss_url),
+    error = function(e) data.frame()
+  )
   
   if (ncol(rss) == 0 || nrow(rss) == 0) {
     article_urls <- character(0)
