@@ -185,13 +185,20 @@ run_domain_test <- function(domain, rss_url, con, run_id, n_articles = 10) {
   }
 
   # article_urls <- get_article_urls_from_rss(rss_url, n = n_articles)
-  article_urls_rss <- paperboy::pb_collect_rss(rss_url) %>% 
-    dplyr::select(dplyr::any_of(c("link", "url"))) %>% 
-    dplyr::select(1) %>% 
-    unlist(recursive = F) %>% 
-    unique()
-  article_urls <- sample(article_urls_rss, size = n_articles)
+  rss <- paperboy::pb_collect_rss(rss_url)
   
+  if (ncol(rss) == 0 || nrow(rss) == 0) {
+    article_urls_rss <- character(0)
+  } else {
+    article_urls_rss <- rss %>% 
+      dplyr::select(dplyr::any_of(c("link", "url"))) %>% 
+      dplyr::select(1) %>% 
+      unlist(recursive = F) %>% 
+      unique()
+    article_urls <- sample(article_urls_rss, size = min(n_articles, length(article_urls_rss)))
+    
+  }
+
   
   if (length(article_urls) == 0) {
     save_result(0, 0, NA, NA, NA, NA, "broken", "No article URLs found in RSS feed")
