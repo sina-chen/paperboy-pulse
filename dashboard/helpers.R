@@ -188,7 +188,7 @@ run_domain_test <- function(domain, rss_url, con, run_id, n_articles = 10) {
   rss <- paperboy::pb_collect_rss(rss_url)
   
   if (ncol(rss) == 0 || nrow(rss) == 0) {
-    article_urls_rss <- character(0)
+    article_urls <- character(0)
   } else {
     article_urls_rss <- rss %>% 
       dplyr::select(dplyr::any_of(c("link", "url"))) %>% 
