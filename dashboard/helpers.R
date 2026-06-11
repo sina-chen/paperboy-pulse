@@ -166,7 +166,7 @@ get_article_urls_from_rss <- function(rss_url, n = 5) {
 
 # Accepts an open connection (con) — caller is responsible for open/close.
 # This avoids reopening the DB for every domain in a run.
-run_domain_test <- function(domain, rss_url, con, run_id, n_articles = 3) {
+run_domain_test <- function(domain, rss_url, con, run_id, n_articles = 10) {
 
   # Closure captures con/run_id/domain so call sites stay concise
   save_result <- function(n_attempted, n_http_success,
@@ -184,8 +184,15 @@ run_domain_test <- function(domain, rss_url, con, run_id, n_articles = 3) {
     )
   }
 
-  article_urls <- get_article_urls_from_rss(rss_url, n = n_articles)
-
+  # article_urls <- get_article_urls_from_rss(rss_url, n = n_articles)
+  article_urls_rss <- paperboy::pb_collect_rss(rss_url) %>% 
+    dplyr::select(dplyr::any_of(c("link", "url"))) %>% 
+    dplyr::select(1) %>% 
+    unlist(recursive = F) %>% 
+    unique()
+  article_urls <- sample(article_urls_rss, size = n_articles)
+  
+  
   if (length(article_urls) == 0) {
     save_result(0, 0, NA, NA, NA, NA, "broken", "No article URLs found in RSS feed")
     return(invisible(NULL))
@@ -201,8 +208,12 @@ run_domain_test <- function(domain, rss_url, con, run_id, n_articles = 3) {
       return(invisible(NULL))
     }
 
+    collected_filtered <- collected %>%
+      dplyr::filter(status == 200) %>%
+      dplyr::slice_head(n = 3)
+    
     delivered <- paperboy::pb_deliver(
-      collected,
+      collected_filtered,
       try_default  = F,
       ignore_fails = TRUE,
       verbose      = FALSE
