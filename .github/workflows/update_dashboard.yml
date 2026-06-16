@@ -36,6 +36,11 @@ jobs:
         uses: r-lib/actions/setup-r-dependencies@v2
         with:
           extra-packages: remotes
+      
+      - name: Install paperboy from GitHub
+        run: Rscript -e 'remotes::install_github("JBGruber/paperboy", force = TRUE)'
+        env:
+          GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Run scraper checks
         run: Rscript monitors/run_checks.R
