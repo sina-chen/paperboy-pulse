@@ -213,6 +213,12 @@ run_domain_test <- function(domain, rss_url, con, run_id, n_articles = 10) {
     n_attempted    <- nrow(collected)
     n_http_success <- sum(collected$status == 200L, na.rm = TRUE)
 
+    n_403 <- sum(collected$status == 403L, na.rm = TRUE)
+    if (n_403 == n_attempted && n_attempted > 0L) {
+      save_result(n_attempted, 0, NA, NA, NA, NA, "access_denied", "All HTTP requests returned 403 Access Denied")
+      return(invisible(NULL))
+    }
+    
     if (n_http_success == 0L) {
       save_result(n_attempted, 0, NA, NA, NA, NA, "broken", "All HTTP requests failed")
       return(invisible(NULL))

@@ -38,6 +38,7 @@ n_ok       <- sum(results$health == "ok",                   na.rm = TRUE)
 n_degraded <- sum(results$health == "degraded",             na.rm = TRUE)
 n_broken   <- sum(results$health %in% c("broken", "error"), na.rm = TRUE)
 n_no_rss   <- sum(results$health == "no_rss",               na.rm = TRUE)
+n_access_denied <- sum(results$health == "access_denied", na.rm = TRUE)
 
 # ── Last run timestamp ─────────────────────────────────────────────────────────
 ts       <- results$tested_at[!is.na(results$tested_at)]
@@ -46,9 +47,11 @@ last_run <- if (length(ts) == 0) "Never tested" else
 
 # ── Colour helpers ─────────────────────────────────────────────────────────────
 health_bg  <- c(ok = "#d4edda", degraded = "#fff3cd", broken = "#f8d7da",
-                error = "#f8d7da", no_rss = "#e9ecef", untested = "#e9ecef")
+                error = "#f8d7da", no_rss = "#e9ecef", untested = "#e9ecef", 
+                access_denied = "#fde8d8")
 health_col <- c(ok = "#155724", degraded = "#856404", broken = "#721c24",
-                error = "#721c24", no_rss = "#495057", untested = "#495057")
+                error = "#721c24", no_rss = "#495057", untested = "#495057", 
+                access_denied = "#7b3000")
 
 # ── Domain detail setup ────────────────────────────────────────────────────────
 all_domains <- sort(status_info$domain)
@@ -154,6 +157,14 @@ n_broken
 n_no_rss
 ```
 
+```{r}
+#| content: valuebox
+#| title: "Access Denied"
+#| icon: shield-lock
+#| color: warning
+n_access_denied
+```
+
 ## Row {height=80%}
 
 ### Scraper Status
@@ -194,7 +205,7 @@ datatable(
       var col = api.column(1);
       var filterCell = $(api.table().header()).find('tr').eq(1).find('th, td').eq(1);
       filterCell.empty();
-      var statuses = ['ok', 'degraded', 'broken', 'error', 'no_rss', 'untested'];
+      var statuses = ['ok', 'degraded', 'broken', 'error', 'no_rss', 'access_denied', 'untested'];
       var select = $('<select class=\"form-control form-control-sm\" style=\"width:100%\"><option value=\"\">All</option></select>')
         .appendTo(filterCell)
         .on('change', function() { col.search($(this).val(), true, false).draw(); });
@@ -256,6 +267,7 @@ for (d in all_domains) {
       degraded = "bg-warning text-dark",
       broken   = "bg-danger",
       error    = "bg-danger",
+      access_denied = "bg-warning text-dark",
       "bg-secondary"
     )
     badge <- sprintf('<span class="badge %s" style="font-size:0.9rem;">%s</span>',
