@@ -161,7 +161,7 @@ n_no_rss
 #| content: valuebox
 #| title: "Access Denied"
 #| icon: shield-lock
-#| color: warning
+#| color: "#fde8d8"
 n_access_denied
 ```
 
@@ -175,7 +175,7 @@ n_access_denied
 display <- results |>
   mutate(
     http_pct     = ifelse(
-      is.na(n_articles_attempted) | n_articles_attempted == 0, NA_real_,
+      is.na(n_articles_attempted) | n_articles_attempted == 0 | health == "access_denied", NA_real_,
       round(n_http_success / n_articles_attempted * 100)
     ),
     pct_headline = round(pct_headline * 100),
