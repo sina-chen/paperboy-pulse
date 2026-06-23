@@ -22,9 +22,7 @@ jobs:
             "https://raw.githubusercontent.com/JBGruber/paperboy/main/inst/status.csv" \
             -o data/status_raw.csv
           wc -l data/status_raw.csv
-          sed 's/\r//' data/status_raw.csv | \
-          sed 's/^"\(.*\)"$/\1/' | \
-          sed 's/""/"/g' > data/status.csv
+          sed 's/\r//' data/status_raw.csv > data/status.csv
           wc -l data/status.csv
 
       - name: Set up R
