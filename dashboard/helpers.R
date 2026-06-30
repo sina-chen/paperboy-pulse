@@ -214,8 +214,9 @@ run_domain_test <- function(domain, rss_url, con, run_id, n_articles = 10) {
     n_http_success <- sum(collected$status == 200L, na.rm = TRUE)
 
     n_403 <- sum(collected$status == 403L, na.rm = TRUE)
-    if (n_403 == n_attempted && n_attempted > 0L) {
-      save_result(n_attempted, 0, NA, NA, NA, NA, "access_denied", "All HTTP requests returned 403 Access Denied")
+    n_401 <- sum(collected$status == 401L, na.rm = TRUE)
+    if ((n_403 + n_401) == n_attempted && n_attempted > 0L) {
+      save_result(n_attempted, 0, NA, NA, NA, NA, "access_denied", "All HTTP requests returned 401/403 Access Denied")
       return(invisible(NULL))
     }
     
