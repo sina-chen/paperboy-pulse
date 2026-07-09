@@ -118,51 +118,52 @@ for (d in all_domains) {
 ## Row {height=20%}
 
 ```{r}
-#| content: valuebox
-#| title: "Total Scrapers"
-#| icon: newspaper
-#| color: secondary
-n_total
+bslib::value_box(
+  title = "Total Scrapers", value = n_total,
+  showcase = htmltools::tags$i(class = "bi bi-newspaper"),
+  showcase_layout = "left center", theme = "secondary"
+)
 ```
 
 ```{r}
-#| content: valuebox
-#| title: "OK"
-#| icon: check-circle
-#| color: success
-n_ok
+bslib::value_box(
+  title = "OK", value = n_ok,
+  showcase = htmltools::tags$i(class = "bi bi-check-circle"),
+  showcase_layout = "left center", theme = "success"
+)
 ```
 
 ```{r}
-#| content: valuebox
-#| title: "Degraded"
-#| icon: exclamation-triangle
-#| color: warning
-n_degraded
+bslib::value_box(
+  title = "Degraded", value = n_degraded,
+  showcase = htmltools::tags$i(class = "bi bi-exclamation-triangle"),
+  showcase_layout = "left center", theme = "warning"
+)
 ```
 
 ```{r}
-#| content: valuebox
-#| title: "Broken"
-#| icon: x-circle
-#| color: danger
-n_broken
+bslib::value_box(
+  title = "Broken", value = n_broken,
+  showcase = htmltools::tags$i(class = "bi bi-x-circle"),
+  showcase_layout = "left center", theme = "danger"
+)
 ```
 
 ```{r}
-#| content: valuebox
-#| title: "No RSS"
-#| icon: rss
-#| color: light
-n_no_rss
+bslib::value_box(
+  title = "No RSS", value = n_no_rss,
+  showcase = htmltools::tags$i(class = "bi bi-rss"),
+  showcase_layout = "left center", theme = "light"
+)
 ```
 
 ```{r}
-#| content: valuebox
-#| title: "Access Denied"
-#| icon: shield-lock
-#| color: "#fde8d8"
-n_access_denied
+bslib::value_box(
+  title = "Access Denied", value = n_access_denied,
+  showcase = htmltools::tags$i(class = "bi bi-shield-lock"),
+  showcase_layout = "left center",
+  theme = bslib::value_box_theme(bg = "#fde8d8")
+)
 ```
 
 ## Row {height=80%}
