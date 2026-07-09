@@ -34,7 +34,7 @@
 "democratandchronicle.com","![](https://img.shields.io/badge/status-gold-%23ffd700.svg)","[@JBGruber](https://github.com/JBGruber/)","",NA
 "denikn.cz","![](https://img.shields.io/badge/status-gold-%23ffd700.svg)","[@JBGruber](https://github.com/JBGruber/)","","https://denikn.cz/rss"
 "denverpost.com","![](https://img.shields.io/badge/status-gold-%23ffd700.svg)","[@JBGruber](https://github.com/JBGruber/)","","https://www.denverpost.com/rss"
-"der-postillon.com","![](https://img.shields.io/badge/status-gold-%23ffd700.svg)","[@schochastics](https://github.com/schochastics)","[#23](https://github.com/JBGruber/paperboy/issues/23)","https://der-postillon.com/rss.xml"
+"der-postillon.com","![](https://img.shields.io/badge/status-gold-%23ffd700.svg)","[@schochastics](https://github.com/schochastics)","[#23](https://github.com/JBGruber/paperboy/issues/23)","https://www.der-postillon.com/feeds/posts/default?alt=rss&redirect=false"
 "derstandard.at","![](https://img.shields.io/badge/status-silver-%23C0C0C0.svg)","[@schochastics](https://github.com/schochastics)","[#23](https://github.com/JBGruber/paperboy/issues/23)","https://www.derstandard.at/rss"
 "derwesten.de","![](https://img.shields.io/badge/status-gold-%23ffd700.svg)","[@schochastics](https://github.com/schochastics)","[#23](https://github.com/JBGruber/paperboy/issues/23)","https://www.derwesten.de/feed"
 "deutschlandfunk.de","![](https://img.shields.io/badge/status-gold-%23ffd700.svg)","[@schochastics](https://github.com/schochastics)","[#23](https://github.com/JBGruber/paperboy/issues/23)","https://www.deutschlandfunk.de/nachrichten-100.rss"
@@ -50,7 +50,7 @@
 "fnp.de","![](https://img.shields.io/badge/status-gold-%23ffd700.svg)","[@schochastics](https://github.com/schochastics)","[#23](https://github.com/JBGruber/paperboy/issues/23)","https://www.fnp.de/rssfeed.rdf"
 "focus.de","![](https://img.shields.io/badge/status-gold-%23ffd700.svg)","[@schochastics](https://github.com/schochastics)","[#23](https://github.com/JBGruber/paperboy/issues/23)","http://rss.focus.de/fol/XML/rss_folnews.xml"
 "forbes.com","![](https://img.shields.io/badge/status-silver-%23C0C0C0.svg)","[@JBGruber](https://github.com/JBGruber/)","[#2](https://github.com/JBGruber/paperboy/issues/2)","https://www.forbes.com/business/feed/"
-"fortune.com","![](https://img.shields.io/badge/status-requested-lightgrey)","","[#1](https://github.com/JBGruber/paperboy/issues/1)","https://fortune.com/feed"
+"fortune.com","![](https://img.shields.io/badge/status-gold-%23ffd700.svg)","","[#1](https://github.com/JBGruber/paperboy/issues/1)","https://fortune.com/feed"
 "foxbusiness.com","![](https://img.shields.io/badge/status-gold-%23ffd700.svg)","[@JBGruber](https://github.com/JBGruber/)","","https://moxie.foxbusiness.com/google-publisher/latest.xml"
 "foxnews.com","![](https://img.shields.io/badge/status-gold-%23ffd700.svg)","[@JBGruber](https://github.com/JBGruber/)","","https://foxnews.com/rss"
 "fr.de","![](https://img.shields.io/badge/status-gold-%23ffd700.svg)","[@schochastics](https://github.com/schochastics)","[#23](https://github.com/JBGruber/paperboy/issues/23)","http://www.fr.de/rssfeed.rdf"
